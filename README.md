@@ -1,73 +1,39 @@
-# Welcome to your Lovable project
+# Kitchen Buddy
+Kitchen Buddy helps people cook with confidence. We're focusing on elderly users who want technology that actually works for them, not against them. This is our hackathon project exploring how AI can make kitchens more accessible.
 
-## Project info
+## Features
 
-**URL**: https://lovable.dev/projects/9d6d13e4-5ae7-4992-a130-91a449d14f73
+### Ingredient Input
+- **Text Input**: Type ingredients separated by commas or line breaks
+- **Voice Input**: Speak your ingredients using Web Speech API
+- **Photo Input**: *Update coming soon!*
 
-## How can I edit this code?
+### Recipe Discovery
+- Integration with recipe APIs (Spoonacular/Edamam) for smart recipe matching
+- **Smart Filters**:
+ - Dietary preferences (vegetarian, vegan, gluten-free)
+ - Available appliances (oven, stove, air fryer)
+ - Cooking preferences (spicy, quick meals)
+- Display top matching recipes with essential cooking details
 
-There are several ways of editing your application.
+### Accessibility Features
+- **Text-to-Speech**: Have recipe instructions read aloud using Web Speech Synthesis API
+- **Font Size Control**: Adjustable text size slider for better readability
 
-**Use Lovable**
+### Emergency Kitchen Helper
+- "Help!" button for kitchen emergencies
+- Keyword detection for common incidents (fire, cuts, burns)
+- Quick access to emergency instructions and 911 guidance
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/9d6d13e4-5ae7-4992-a130-91a449d14f73) and start prompting.
+### Metric Converter
+- Convert between grams, ounces, and cups for common ingredients
+- Essential for following international recipes
 
-Changes made via Lovable will be committed automatically to this repo.
+## Tech Stack
 
-**Use your preferred IDE**
+- **Frontend**: React with component-based architecture
+- **Styling**: TailwindCSS for responsive design
+- **APIs**: 
+ - OpenAI (web search)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/9d6d13e4-5ae7-4992-a130-91a449d14f73) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Project Structure
