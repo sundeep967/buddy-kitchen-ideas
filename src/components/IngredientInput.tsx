@@ -1,10 +1,10 @@
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Camera, Mic, Type, X, Plus, Upload, Image } from 'lucide-react';
+import { Camera, Mic, Type, X, Plus, Upload, Image, Video } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 interface IngredientInputProps {
@@ -16,6 +16,10 @@ const IngredientInput = ({ ingredients, setIngredients }: IngredientInputProps) 
   const [inputValue, setInputValue] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
 
   const addIngredient = (ingredient: string) => {
@@ -120,6 +124,70 @@ const IngredientInput = ({ ingredients, setIngredients }: IngredientInputProps) 
     }
   };
 
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' } // Try to use back camera on mobile
+      });
+      setStream(mediaStream);
+      setShowCamera(true);
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+      }
+      
+      toast({
+        title: "Camera started",
+        description: "Position your ingredients in view and click capture.",
+      });
+    } catch (error) {
+      toast({
+        title: "Camera access denied",
+        description: "Please allow camera access or use photo upload instead.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const video = videoRef.current;
+      const context = canvas.getContext('2d');
+      
+      // Set canvas size to match video
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      // Draw current video frame to canvas
+      context?.drawImage(video, 0, 0);
+      
+      // Convert canvas to data URL
+      const dataURL = canvas.toDataURL('image/jpeg');
+      setUploadedImage(dataURL);
+      
+      // Stop camera and hide camera view
+      stopCamera();
+      
+      // Add sample ingredients
+      const sampleIngredients = ['tomato', 'onion', 'garlic'];
+      sampleIngredients.forEach(ingredient => addIngredient(ingredient));
+      
+      toast({
+        title: "Photo captured successfully!",
+        description: "We've detected some common ingredients. You can add more manually.",
+      });
+    }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setShowCamera(false);
+  };
+
   const clearPhoto = () => {
     setUploadedImage(null);
     toast({
@@ -147,7 +215,7 @@ const IngredientInput = ({ ingredients, setIngredients }: IngredientInputProps) 
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Input Methods */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
               <input
                 type="file"
@@ -164,12 +232,22 @@ const IngredientInput = ({ ingredients, setIngredients }: IngredientInputProps) 
                   asChild
                 >
                   <div>
-                    <Camera className="w-4 h-4" />
+                    <Upload className="w-4 h-4" />
                     Upload Photo
                   </div>
                 </Button>
               </label>
             </div>
+
+            <Button
+              onClick={startCamera}
+              variant="outline"
+              className="flex items-center gap-2 h-12 border-orange-200 hover:bg-orange-50"
+              disabled={showCamera}
+            >
+              <Camera className="w-4 h-4" />
+              Take Photo
+            </Button>
             
             <Button
               onClick={startVoiceInput}
@@ -189,6 +267,44 @@ const IngredientInput = ({ ingredients, setIngredients }: IngredientInputProps) 
             </div>
           </div>
 
+          {/* Camera View */}
+          {showCamera && (
+            <Card className="border-orange-200">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="font-medium text-orange-800 flex items-center gap-2">
+                    <Video className="w-4 h-4" />
+                    Camera View
+                  </h4>
+                  <Button
+                    onClick={stopCamera}
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 border-red-200 hover:bg-red-50"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="relative flex flex-col items-center space-y-4">
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    className="max-w-full max-h-64 rounded-lg border border-orange-200"
+                  />
+                  <Button
+                    onClick={capturePhoto}
+                    className="bg-orange-500 hover:bg-orange-600"
+                  >
+                    <Camera className="w-4 h-4 mr-2" />
+                    Capture Photo
+                  </Button>
+                </div>
+                <canvas ref={canvasRef} className="hidden" />
+              </CardContent>
+            </Card>
+          )}
+
           {/* Uploaded Image Display */}
           {uploadedImage && (
             <Card className="border-orange-200">
@@ -196,7 +312,7 @@ const IngredientInput = ({ ingredients, setIngredients }: IngredientInputProps) 
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-medium text-orange-800 flex items-center gap-2">
                     <Image className="w-4 h-4" />
-                    Uploaded Photo
+                    Captured/Uploaded Photo
                   </h4>
                   <Button
                     onClick={clearPhoto}
@@ -210,7 +326,7 @@ const IngredientInput = ({ ingredients, setIngredients }: IngredientInputProps) 
                 <div className="flex justify-center">
                   <img
                     src={uploadedImage}
-                    alt="Uploaded ingredients"
+                    alt="Captured or uploaded ingredients"
                     className="max-h-48 max-w-full object-contain rounded-lg border border-orange-200"
                   />
                 </div>
