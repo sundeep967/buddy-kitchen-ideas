@@ -1,6 +1,21 @@
 # Kitchen Buddy
 Kitchen Buddy helps people cook with confidence. We're focusing on elderly users who want technology that actually works for them, not against them. This is our hackathon project exploring how AI can make kitchens more accessible.
 
+
+## Usage
+
+- Install Node.js 24+
+- Clone repository
+- Go into repository
+- Create a file named '.env'
+- Paste 'OPEN_AI_KEY=your_api_key_here' in that file
+- Run 'npm i'
+- Run 'npm run dev'
+- Open a new command prompt
+- Run 'node server.js'
+- Go to 'http://localhost:8080/'
+
+
 ## Features
 
 ### Ingredient Input
@@ -36,4 +51,3 @@ Kitchen Buddy helps people cook with confidence. We're focusing on elderly users
 - **APIs**: 
  - OpenAI (web search)
 
-## Project Structure
