@@ -101,7 +101,7 @@ const EmergencyModal = ({ isOpen, onClose }: EmergencyModalProps) => {
 
           <div className="flex justify-between items-center pt-4">
             <Button
-              onClick={() => window.open('tel:911', '_self')}
+              onClick={() => console.log("Calling 911...")}
               className="bg-red-600 hover:bg-red-700 text-white"
             >
               <Phone className="w-4 h-4 mr-2" />

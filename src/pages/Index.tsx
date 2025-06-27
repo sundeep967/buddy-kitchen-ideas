@@ -19,7 +19,6 @@ const Index = () => {
               <ChefHat className="w-6 h-6 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-gray-800">Kitchen Buddy</h1>
-            <span className="text-sm text-orange-600 bg-orange-100 px-2 py-1 rounded-full">MVP</span>
           </div>
         </div>
       </header>

@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Clock, Users, Volume2, Search, Filter } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
+import OpenAI from "openai";
 interface Recipe {
   id: number;
   title: string;
@@ -35,6 +36,48 @@ const RecipeFinder = ({ ingredients }: RecipeFinderProps) => {
     dairyFree: false,
   });
   const { toast } = useToast();
+
+async function fetchRecipesAI(ingredients, dietary) {
+  try {
+    const response = await fetch("http://localhost:5050/api/recipes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ingredients, dietary })
+    });
+    const data = await response.json();
+    if (data.recipes) {
+      return data.recipes;
+    } else {
+      // handle error, return empty array or error message as needed
+      console.error("Error from API:", data);
+      return [];
+    }
+  } catch (err) {
+    console.error("Network or server error:", err);
+    return [];
+  }
+}
+
+async function fetchRecipesAIMidwest(ingredients, dietary) {
+  try {
+    const response = await fetch("http://localhost:5050/api/midwest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ingredients, dietary })
+    });
+    const data = await response.json();
+    if (data.recipes) {
+      return data.recipes;
+    } else {
+      // handle error, return empty array or error message as needed
+      console.error("Error from API:", data);
+      return [];
+    }
+  } catch (err) {
+    console.error("Network or server error:", err);
+    return [];
+  }
+}
 
   // Mock recipe data for MVP
   const mockRecipes: Recipe[] = [
@@ -83,8 +126,42 @@ const RecipeFinder = ({ ingredients }: RecipeFinderProps) => {
     setIsLoading(true);
     
     // Simulate API call
-    setTimeout(() => {
-      let filteredRecipes = mockRecipes;
+    setTimeout(async () => {
+      let filteredRecipes = await fetchRecipesAI(ingredients, filters);
+      
+      // Apply dietary filters
+      if (filters.vegetarian || filters.vegan) {
+        filteredRecipes = filteredRecipes.filter(recipe => 
+          recipe.title.toLowerCase().includes('vegetable') || 
+          recipe.title.toLowerCase().includes('salad')
+        );
+      }
+      
+      setRecipes(filteredRecipes);
+      setIsLoading(false);
+      
+      toast({
+        title: "Recipes found!",
+        description: `Found ${filteredRecipes.length} recipes matching your ingredients.`,
+      });
+    }, 1000);
+  };
+
+  const searchRecipesMidwest = () => {
+    if (ingredients.length === 0) {
+      toast({
+        title: "No ingredients added",
+        description: "Please add some ingredients first!",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    
+    // Simulate API call
+    setTimeout(async () => {
+      let filteredRecipes = await fetchRecipesAIMidwest(ingredients, filters);
       
       // Apply dietary filters
       if (filters.vegetarian || filters.vegan) {
@@ -169,6 +246,13 @@ const RecipeFinder = ({ ingredients }: RecipeFinderProps) => {
             disabled={isLoading}
           >
             {isLoading ? 'Searching...' : 'Search Recipes'}
+          </Button>
+          <Button
+            onClick={searchRecipesMidwest}
+            className="w-full bg-orange-500 hover:bg-orange-600"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Thinking...' : 'Search Midwest Recipes'}
           </Button>
 
           {ingredients.length > 0 && (

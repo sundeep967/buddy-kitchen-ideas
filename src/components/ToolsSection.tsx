@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertTriangle, Calculator, Phone } from 'lucide-react';
+import { AlertTriangle, Calculator, Phone, Thermometer } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import EmergencyModal from '@/components/EmergencyModal';
 
@@ -97,7 +97,7 @@ const ToolsSection = () => {
               🆘 Help!
             </Button>
             <Button
-              onClick={() => window.open('tel:911', '_self')}
+              onClick={() => console.log("Calling 911...")}
               variant="outline"
               className="border-red-300 text-red-700 hover:bg-red-100"
             >
@@ -197,6 +197,76 @@ const ToolsSection = () => {
             </Button>
           </div>
         </CardContent>
+      </Card>
+      {/* Temperature */}
+      <Card className="shadow-lg border-orange-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-orange-800">
+            <Thermometer className="w-5 h-5" />
+            Temperature
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+  <div>
+    <h2 className="text-lg font-semibold mb-4">Safe Internal Temperatures for Meats</h2>
+    <table className="min-w-full bg-white border border-orange-200 rounded">
+      <thead className="bg-orange-50">
+        <tr>
+          <th className="py-2 px-4 text-left font-medium border-b">Meat</th>
+          <th className="py-2 px-4 text-left font-medium border-b">Fahrenheit (°F)</th>
+          <th className="py-2 px-4 text-left font-medium border-b">Celsius (°C)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td className="py-2 px-4 border-b">Beef, veal & lamb (steaks, chops, roasts) - Medium Rare</td>
+          <td className="py-2 px-4 border-b">145°F</td>
+          <td className="py-2 px-4 border-b">63°C</td>
+        </tr>
+        <tr>
+          <td className="py-2 px-4 border-b">Beef, veal & lamb (steaks, chops, roasts) - Medium</td>
+          <td className="py-2 px-4 border-b">160°F</td>
+          <td className="py-2 px-4 border-b">71°C</td>
+        </tr>
+        <tr>
+          <td className="py-2 px-4 border-b">Ground beef, pork, veal & lamb</td>
+          <td className="py-2 px-4 border-b">160°F</td>
+          <td className="py-2 px-4 border-b">71°C</td>
+        </tr>
+        <tr>
+          <td className="py-2 px-4 border-b">Pork (chops, roasts)</td>
+          <td className="py-2 px-4 border-b">145°F</td>
+          <td className="py-2 px-4 border-b">63°C</td>
+        </tr>
+        <tr>
+          <td className="py-2 px-4 border-b">Chicken & Turkey (whole or parts)</td>
+          <td className="py-2 px-4 border-b">165°F</td>
+          <td className="py-2 px-4 border-b">74°C</td>
+        </tr>
+        <tr>
+          <td className="py-2 px-4 border-b">Ground poultry</td>
+          <td className="py-2 px-4 border-b">165°F</td>
+          <td className="py-2 px-4 border-b">74°C</td>
+        </tr>
+        <tr>
+          <td className="py-2 px-4 border-b">Fish & Shellfish</td>
+          <td className="py-2 px-4 border-b">145°F</td>
+          <td className="py-2 px-4 border-b">63°C</td>
+        </tr>
+        <tr>
+          <td className="py-2 px-4 border-b">Ham, fresh or smoked</td>
+          <td className="py-2 px-4 border-b">145°F</td>
+          <td className="py-2 px-4 border-b">63°C</td>
+        </tr>
+        <tr>
+          <td className="py-2 px-4 border-b">Ham, fully cooked (reheat)</td>
+          <td className="py-2 px-4 border-b">140°F</td>
+          <td className="py-2 px-4 border-b">60°C</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</CardContent>
       </Card>
 
       <EmergencyModal 
