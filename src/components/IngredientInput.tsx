@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Camera, Mic, Type, X, Plus } from 'lucide-react';
+import { Camera, Mic, Type, X, Plus, Upload, Image } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 interface IngredientInputProps {
@@ -15,6 +15,7 @@ interface IngredientInputProps {
 const IngredientInput = ({ ingredients, setIngredients }: IngredientInputProps) => {
   const [inputValue, setInputValue] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const { toast } = useToast();
 
   const addIngredient = (ingredient: string) => {
@@ -90,10 +91,40 @@ const IngredientInput = ({ ingredients, setIngredients }: IngredientInputProps) 
     }
   };
 
-  const handlePhotoUpload = () => {
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = e.target?.result as string;
+          setUploadedImage(result);
+          
+          // For MVP, we'll add some sample ingredients when photo is uploaded
+          const sampleIngredients = ['tomato', 'onion', 'garlic'];
+          sampleIngredients.forEach(ingredient => addIngredient(ingredient));
+          
+          toast({
+            title: "Photo uploaded successfully!",
+            description: "We've detected some common ingredients. You can add more manually.",
+          });
+        };
+        reader.readAsDataURL(file);
+      } else {
+        toast({
+          title: "Invalid file type",
+          description: "Please upload an image file.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const clearPhoto = () => {
+    setUploadedImage(null);
     toast({
-      title: "Photo upload coming soon!",
-      description: "This feature will be available in the next update.",
+      title: "Photo removed",
+      description: "Your uploaded photo has been cleared.",
     });
   };
 
@@ -117,14 +148,28 @@ const IngredientInput = ({ ingredients, setIngredients }: IngredientInputProps) 
         <CardContent className="space-y-4">
           {/* Input Methods */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button
-              onClick={handlePhotoUpload}
-              variant="outline"
-              className="flex items-center gap-2 h-12 border-orange-200 hover:bg-orange-50"
-            >
-              <Camera className="w-4 h-4" />
-              Upload Photo
-            </Button>
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                className="hidden"
+                id="photo-upload"
+              />
+              <label htmlFor="photo-upload">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex items-center gap-2 h-12 border-orange-200 hover:bg-orange-50 w-full cursor-pointer"
+                  asChild
+                >
+                  <div>
+                    <Camera className="w-4 h-4" />
+                    Upload Photo
+                  </div>
+                </Button>
+              </label>
+            </div>
             
             <Button
               onClick={startVoiceInput}
@@ -143,6 +188,38 @@ const IngredientInput = ({ ingredients, setIngredients }: IngredientInputProps) 
               <span className="text-sm text-gray-600">or type below</span>
             </div>
           </div>
+
+          {/* Uploaded Image Display */}
+          {uploadedImage && (
+            <Card className="border-orange-200">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium text-orange-800 flex items-center gap-2">
+                    <Image className="w-4 h-4" />
+                    Uploaded Photo
+                  </h4>
+                  <Button
+                    onClick={clearPhoto}
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 border-red-200 hover:bg-red-50"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="flex justify-center">
+                  <img
+                    src={uploadedImage}
+                    alt="Uploaded ingredients"
+                    className="max-h-48 max-w-full object-contain rounded-lg border border-orange-200"
+                  />
+                </div>
+                <p className="text-sm text-gray-600 mt-2 text-center">
+                  Image analysis feature coming soon! For now, we've added some sample ingredients.
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Text Input */}
           <div className="flex gap-2">
